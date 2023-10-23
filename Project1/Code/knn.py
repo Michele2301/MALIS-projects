@@ -46,13 +46,10 @@ class KNN:
         """
         # compute the distance between X_new and X
         dst = self.minkowski_dist(X_new, p)
-        print(dst.shape)
         # Get the indices that would sort each row in ascending order
         nearest_neighbors = np.argpartition(dst, self.k, axis=1)[:, :self.k]
-        print(nearest_neighbors.shape)
         # get the labels of the nearest neighbors
         nearest_neighbors_votes = self.y[nearest_neighbors]
-        print(nearest_neighbors_votes.shape)
         # get the most frequent label
         y = np.sum(nearest_neighbors_votes, axis=1)
         y_hat = np.where(y > self.k / 2, 1, 0)
