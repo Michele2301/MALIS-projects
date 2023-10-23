@@ -1,4 +1,6 @@
+import numpy
 import numpy as np
+from scipy.spatial import distance_matrix
 
 
 class KNN:
@@ -31,7 +33,8 @@ class KNN:
         - y : is a 1D Nx1 numpy array containing the labels for the corrisponding row of X
         """
         self.X = X
-        self.y = y
+        # y are -1 o 1
+        self.y = 2 * y - 1
 
     def predict(self, X_new, p):
         """
@@ -42,19 +45,17 @@ class KNN:
         - y_hat : is a Mx1 numpy array containing the predicted labels for the X_new points
         """
         # compute the distance between X_new and X
-        dst = self.minkowski_dist(X_new, p)[:, :self.k]
-        # to change into argpartition
-        nearest_neighbors = np.argsort(dst, axis=0)
-        print("first nn:", nearest_neighbors.shape)
-        # nearest_neighbors is a MxN numpy array containing the indices of the k nearest neighbors for each point in X_new
-        # now I need to find the labels of the k nearest neighbors for each point in X_new
-        nearest_neighbors = self.y[nearest_neighbors[:, :]]
-        print("second nn:", nearest_neighbors.shape)
-        y = np.sum(nearest_neighbors, axis=1)
-        print("y:", y)
-        y_hat = y > self.k/2
-        y_hat = y_hat.astype(int)
-        print("y_hat:", y_hat)
+        dst = self.minkowski_dist(X_new, p)
+        print(dst.shape)
+        # Get the indices that would sort each row in ascending order
+        nearest_neighbors = np.argpartition(dst, self.k, axis=1)[:, :self.k]
+        print(nearest_neighbors.shape)
+        # get the labels of the nearest neighbors
+        nearest_neighbors_votes = self.y[nearest_neighbors]
+        print(nearest_neighbors_votes.shape)
+        # get the most frequent label
+        y = np.sum(nearest_neighbors_votes, axis=1)
+        y_hat = np.where(y > self.k / 2, 1, 0)
         return y_hat
 
     def minkowski_dist(self, X_new, p):

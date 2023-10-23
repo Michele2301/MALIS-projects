@@ -12,10 +12,15 @@ if __name__ == "__main__":
 
     DTR = dtr.values
     DTEV = dtev.values
+    accuracies = []
+    for k in range(1, 1000):
+        knn_classifier = KNN(k)
+        knn_classifier.train(DTR[:, :-1], DTR[:, -1])
+        for p in range (1, 4):
+            predictions = knn_classifier.predict(DTEV[:, :-1], p)
+            accuracy = np.mean(predictions == DTEV[:, -1])
+            print("k:", k, "p:", p, "accuracy:", accuracy)
+            accuracies.append([k, p, accuracy])
 
-    knn_classifier = KNN(4)
-    knn_classifier.train(DTR[:, :-1], DTR[:, -1])
-    predictions = knn_classifier.predict(DTEV[:, :-1], 2)
-    accuracy = np.mean(predictions == DTEV[:, -1])
-    print("accuracy:", accuracy)
+    print(max(accuracies, key=lambda x: x[2]))
 
