@@ -54,6 +54,7 @@ class KNN:
         y = np.sum(nearest_neighbors_votes, axis=1)
         y_hat = np.where(y > 0, 1, 0)
         return y_hat.reshape((y_hat.size, 1))
+
     def minkowski_dist(self, X_new, p):
         """
         INPUT :
