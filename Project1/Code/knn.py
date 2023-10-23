@@ -48,13 +48,12 @@ class KNN:
         dst = self.minkowski_dist(X_new, p)
         # Get the indices that would sort each row in ascending order
         nearest_neighbors = np.argpartition(dst, self.k, axis=1)[:, :self.k]
-        # get the labels of the nearest neighbors
+        # get the labels of the nearest neighbors, exploiting broadcasting
         nearest_neighbors_votes = self.y[nearest_neighbors]
         # get the most frequent label
         y = np.sum(nearest_neighbors_votes, axis=1)
-        y_hat = np.where(y > self.k / 2, 1, 0)
-        return y_hat
-
+        y_hat = np.where(y > 0, 1, 0)
+        return y_hat.reshape((y_hat.size, 1))
     def minkowski_dist(self, X_new, p):
         """
         INPUT :

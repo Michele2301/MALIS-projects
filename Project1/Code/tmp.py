@@ -13,12 +13,12 @@ if __name__ == "__main__":
     DTR = dtr.values
     DTEV = dtev.values
     accuracies = []
-    for k in range(1, 1000):
+    for k in range(1, 500):
         knn_classifier = KNN(k)
         knn_classifier.train(DTR[:, :-1], DTR[:, -1])
         for p in range (1, 4):
             predictions = knn_classifier.predict(DTEV[:, :-1], p)
-            accuracy = np.mean(predictions == DTEV[:, -1])
+            accuracy = np.mean(predictions[:, 0] == DTEV[:, -1])
             print("k:", k, "p:", p, "accuracy:", accuracy)
             accuracies.append([k, p, accuracy])
 
