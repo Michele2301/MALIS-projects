@@ -36,7 +36,7 @@ class KNN:
         # y are -1 o 1
         self.y = 2 * y - 1
 
-    def predict(self, X_new, p):
+    def predict(self, X_new, p, loop=False):
         """
         INPUT :
         - X_new : is a MxD numpy array containing the coordinates of new points whose label has to be predicted
@@ -45,7 +45,7 @@ class KNN:
         - y_hat : is a Mx1 numpy array containing the predicted labels for the X_new points
         """
         # compute the distance between X_new and X
-        dst = self.minkowski_dist(X_new, p)
+        dst = self.minkowski_dist(X_new, p, loop)
         # Get the indices that would sort each row in ascending order
         nearest_neighbors = np.argpartition(dst, self.k, axis=1)[:, :self.k]
         # get the labels of the nearest neighbors, exploiting broadcasting
@@ -55,7 +55,7 @@ class KNN:
         y_hat = np.where(y > 0, 1, 0)
         return y_hat.reshape((y_hat.size, 1))
 
-    def minkowski_dist(self, X_new, p):
+    def minkowski_dist(self, X_new, p, loop=False):
         """
         INPUT :
         - X_new : is a MxD numpy array containing the coordinates of points for which the distance to the training set X will be estimated
@@ -64,9 +64,15 @@ class KNN:
         OUTPUT :
         - dst : is an MxN numpy array containing the distance of each point in X_new to X
         """
-        dst = X_new[:, None, :] - self.X[None, :, :]
-        # dst is now a 3D array of shape (M,N,D) thanks to broadcasting functionalities of numpy
-        # now I can access a point using [x, y, z], where x,z indicates the point in X_new and y indicates the point in X with respect to which I am computing the distance
-        # now i need to sum over the last dimension (the features dimension) to obtain the distance between the two points
-        dst = np.sum(np.abs(dst) ** p, axis=2) ** (1 / p)
+        dst = None
+        if loop:
+            dst = np.zeros((X_new.shape[0], self.X.shape[0]))
+            for i in range(X_new.shape[0]):
+                dst[i, :] = np.sum(np.abs(X_new[i, :] - self.X) ** p, axis=1) ** (1 / p)
+        else:
+            dst = X_new[:, None, :] - self.X[None, :, :]
+            # dst is now a 3D array of shape (M,N,D) thanks to broadcasting functionalities of numpy
+            # now I can access a point using [x, y, z], where x,z indicates the point in X_new and y indicates the point in X with respect to which I am computing the distance
+            # now i need to sum over the last dimension (the features dimension) to obtain the distance between the two points
+            dst = np.sum(np.abs(dst) ** p, axis=2) ** (1 / p)
         return dst
