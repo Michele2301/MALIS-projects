@@ -72,7 +72,7 @@ class KNN:
         else:
             dst = X_new[:, None, :] - self.X[None, :, :]
             # dst is now a 3D array of shape (M,N,D) thanks to broadcasting functionalities of numpy
-            # now I can access a point using [x, y, z], where x,z indicates the point in X_new and y indicates the point in X with respect to which I am computing the distance
+            # now I can access a point using [x, y, z], where x indicates the point in X_new and y indicates the point in X with respect to which I am computing the distance and z the feature
             # now i need to sum over the last dimension (the features dimension) to obtain the distance between the two points
             dst = np.sum(np.abs(dst) ** p, axis=2) ** (1 / p)
         return dst
