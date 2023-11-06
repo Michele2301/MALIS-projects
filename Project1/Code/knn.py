@@ -44,6 +44,7 @@ class KNN:
         OUTPUT :
         - y_hat : is a Mx1 numpy array containing the predicted labels for the X_new points
         """
+        from scipy.stats import mode
         # compute the distance between X_new and X
         dst = self.minkowski_dist(X_new, p, loop)
         # Get the indices that would sort each row in ascending order
@@ -66,9 +67,11 @@ class KNN:
         """
         dst = None
         if loop:
-            dst = np.zeros((X_new.shape[0], self.X.shape[0]))
+            # empty is faster than zeros
+            dst = np.empty((X_new.shape[0], self.X.shape[0]))
             for i in range(X_new.shape[0]):
-                dst[i, :] = np.sum(np.abs(X_new[i, :] - self.X) ** p, axis=1) ** (1 / p)
+                # linalg is faster than raw minkowski distance
+                dst[i, :] = np.linalg.norm(X_new[i, :] - self.X, ord=p, axis=1)
         else:
             dst = X_new[:, None, :] - self.X[None, :, :]
             # dst is now a 3D array of shape (M,N,D) thanks to broadcasting functionalities of numpy
