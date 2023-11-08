@@ -1,5 +1,6 @@
 import numpy
 import numpy as np
+import sys
 from scipy.spatial import distance_matrix
 import pandas as pd
 
@@ -93,6 +94,9 @@ if __name__ == "__main__":
     y_val = dtev.values[:, -1]
     p = 5
     k = 23
+    if len(sys.argv) == 3:
+        k = int(sys.argv[1])
+        p = int(sys.argv[2])
     kNN = KNN(k)
     kNN.train(x_train, y_train)
     y_pred = kNN.predict(x_val, p)
