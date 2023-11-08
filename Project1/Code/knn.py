@@ -36,7 +36,7 @@ class KNN:
         # y are -1 o 1
         self.y = 2 * y - 1
 
-    def predict(self, X_new, p, loop=False):
+    def predict(self, X_new, p, loop=True):
         """
         INPUT :
         - X_new : is a MxD numpy array containing the coordinates of new points whose label has to be predicted
@@ -55,7 +55,7 @@ class KNN:
         y_hat = np.where(y > 0, 1, 0)
         return y_hat.reshape((y_hat.size, 1))
 
-    def minkowski_dist(self, X_new, p, loop=False):
+    def minkowski_dist(self, X_new, p, loop=True):
         """
         INPUT :
         - X_new : is a MxD numpy array containing the coordinates of points for which the distance to the training set X will be estimated
