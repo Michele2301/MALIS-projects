@@ -1,6 +1,7 @@
 import numpy
 import numpy as np
 from scipy.spatial import distance_matrix
+import pandas as pd
 
 
 class KNN:
@@ -32,6 +33,8 @@ class KNN:
         - X : is a 2D NxD numpy array containing the coordinates of points
         - y : is a 1D Nx1 numpy array containing the labels for the corrisponding row of X
         """
+        if X.shape[0] < self.k:
+            raise Exception("Sorry, k is bigger than the number of training samples. Start again!")
         self.X = X
         # y are -1 o 1
         self.y = 2 * y - 1
@@ -79,3 +82,18 @@ class KNN:
             # now i need to sum over the last dimension (the features dimension) to obtain the distance between the two points
             dst = np.sum(np.abs(dst) ** p, axis=2) ** (1 / p)
         return dst
+
+
+if __name__ == "__main__":
+    dtr = pd.read_csv('../Data/training.csv')
+    dtev = pd.read_csv('../Data/validation.csv')
+    x_train = dtr.values[:, :-1]
+    y_train = dtr.values[:, -1]
+    x_val = dtev.values[:, :-1]
+    y_val = dtev.values[:, -1]
+    p = 5
+    k = 23
+    kNN = KNN(k)
+    kNN.train(x_train, y_train)
+    y_pred = kNN.predict(x_val, p)
+    print(np.mean(y_pred == y_val.reshape((y_val.size, 1))))
