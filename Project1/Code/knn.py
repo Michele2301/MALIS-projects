@@ -1,3 +1,9 @@
+"""
+Project 1 - kNN
+F. Dente, M. Ferrero
+"""
+
+
 import numpy
 import numpy as np
 import sys
