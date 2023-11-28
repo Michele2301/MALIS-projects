@@ -41,6 +41,9 @@ class Perceptron:
         self.alpha = alpha
         self.weights = np.empty(0)
 
+    def __str__(self):
+        return "Perceptron model with weights: ", self.weights
+
     def train(self, X, y, weights):
         """
         Train the model, 
@@ -61,10 +64,13 @@ class Perceptron:
                     m += 1
             if m == 0:
                 break    
-        self.weights = weights        
+        self.weights = weights
+
+    def loss_function(self,X,y):
+        return 0;
 
     def predict(self, X):
-        return np.sign(self.weights[1:,1].transpose().dot(X.transpose()) + self.weights[0])
+        return np.sign(self.weights[1:].transpose().dot(X.transpose()) + self.weights[0])
 
 
 
