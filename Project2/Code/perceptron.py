@@ -11,14 +11,14 @@ from sklearn.preprocessing import PolynomialFeatures
 
 
 def vcol(v):
-        """
-        Convert a 1D numpy array to a 2D column vector
-        INPUT:
-        - v : is a 1D numpy array
-        OUTPUT:
-        - a 2D numpy array with shape (v.size, 1)
-        """
-        return v.reshape((v.size, 1))
+    """
+    Convert a 1D numpy array to a 2D column vector
+    INPUT:
+    - v : is a 1D numpy array
+    OUTPUT:
+    - a 2D numpy array with shape (v.size, 1)
+    """
+    return v.reshape((v.size, 1))
 
 def vrow(v):
     """
@@ -39,7 +39,7 @@ class Perceptron:
         - alpha : is a real number representing the learning rate
         """
         self.alpha = alpha
-        self.weights = np.empty(0)
+        self.weights = vcol(np.empty(0))
 
     def __str__(self):
         return "Perceptron model with weights: ", self.weights
@@ -65,11 +65,29 @@ class Perceptron:
             if m == 0:
                 break    
         self.weights = weights
-
-    def loss_function(self,X,y):
-        return 0;
+    
+    def compute_min_margin(self, X):
+        """
+        Compute the minimum margin for the given data, it works only if the model has been trained before
+        INPUT :
+        - X : is a 2D NxD numpy array containing the coordinates of points where [N] is the number of samples and [D] is the number of features
+        OUTPUT :
+        - a real number representing the minimum margin
+        """
+        weights = self.weights/np.linalg.norm(self.weights)
+        X = PolynomialFeatures(1).fit_transform(X)
+        min = np.min(np.abs(X.dot(weights)))
+        return min
+        
 
     def predict(self, X):
+        """
+        Predict the labels for the given data, it works only if the model has been trained before
+        INPUT :
+        - X : is a 2D NxD numpy array containing the coordinates of points where [N] is the number of samples and [D] is the number of features
+        OUTPUT :
+        - a 1D numpy array containing the predicted labels in form of -1 or 1
+        """
         return np.sign(self.weights[1:].transpose().dot(X.transpose()) + self.weights[0])
 
 
