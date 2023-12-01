@@ -51,20 +51,25 @@ class Perceptron:
         - X : is a 2D NxD numpy array containing the coordinates of points where [N] is the number of samples and [D] is the number of features
         - y : is a 1D Nx1 numpy array containing the labels for the corrisponding row of X where [N] is the number of samples and labels are -1 or 1
         - weights: is a 1D numpy array containing the initial weights of the model (D+1 elements)
+        OUTPUT :
+        - a real number representing the number of iterations needed to find the solution
         """
         # Add the offset b to the weights
         X = PolynomialFeatures(1).fit_transform(X)
         # Transform the weights to a column vector
         weights = vcol(weights)
+        iterations = 0
         while True:
             m = 0
             for i in range(X.shape[0]):
                 if (weights.transpose().dot(vcol(X[i])) * y[i]) <= 0:
                     weights = weights + self.alpha * vcol(X[i]) * y[i]
                     m += 1
+            iterations += 1
             if m == 0:
                 break    
         self.weights = weights
+        return iterations
     
     def compute_min_margin(self, X):
         """
