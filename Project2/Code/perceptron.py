@@ -44,13 +44,14 @@ class Perceptron:
     def __str__(self):
         return "Perceptron model with weights: ", self.weights
 
-    def train(self, X, y, weights):
+    def train(self, X, y, weights, max_iterations = 10000):
         """
         Train the model, 
         INPUT :
         - X : is a 2D NxD numpy array containing the coordinates of points where [N] is the number of samples and [D] is the number of features
         - y : is a 1D Nx1 numpy array containing the labels for the corrisponding row of X where [N] is the number of samples and labels are -1 or 1
         - weights: is a 1D numpy array containing the initial weights of the model (D+1 elements)
+        - max_iterations = 10000: is an integer representing the maximum number of iterations to perform
         OUTPUT :
         - a real number representing the number of iterations needed to find the solution
         """
@@ -68,6 +69,8 @@ class Perceptron:
             iterations += 1
             if m == 0:
                 break    
+            if iterations == max_iterations:
+                break
         self.weights = weights
         return iterations
     
