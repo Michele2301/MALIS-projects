@@ -11,14 +11,14 @@ from sklearn.preprocessing import PolynomialFeatures
 
 
 def vcol(v):
-        """
-        Convert a 1D numpy array to a 2D column vector
-        INPUT:
-        - v : is a 1D numpy array
-        OUTPUT:
-        - a 2D numpy array with shape (v.size, 1)
-        """
-        return v.reshape((v.size, 1))
+    """
+    Convert a 1D numpy array to a 2D column vector
+    INPUT:
+    - v : is a 1D numpy array
+    OUTPUT:
+    - a 2D numpy array with shape (v.size, 1)
+    """
+    return v.reshape((v.size, 1))
 
 def vrow(v):
     """
@@ -39,37 +39,63 @@ class Perceptron:
         - alpha : is a real number representing the learning rate
         """
         self.alpha = alpha
-        self.weights = np.empty(0)
+        self.weights = vcol(np.empty(0))
 
     def __str__(self):
         return "Perceptron model with weights: ", self.weights
 
-    def train(self, X, y, weights):
+    def train(self, X, y, weights, max_iterations = 10000):
         """
         Train the model, 
         INPUT :
         - X : is a 2D NxD numpy array containing the coordinates of points where [N] is the number of samples and [D] is the number of features
         - y : is a 1D Nx1 numpy array containing the labels for the corrisponding row of X where [N] is the number of samples and labels are -1 or 1
         - weights: is a 1D numpy array containing the initial weights of the model (D+1 elements)
+        - max_iterations = 10000: is an integer representing the maximum number of iterations to perform
+        OUTPUT :
+        - a real number representing the number of iterations needed to find the solution
         """
         # Add the offset b to the weights
         X = PolynomialFeatures(1).fit_transform(X)
         # Transform the weights to a column vector
         weights = vcol(weights)
+        iterations = 0
         while True:
             m = 0
             for i in range(X.shape[0]):
                 if (weights.transpose().dot(vcol(X[i])) * y[i]) <= 0:
                     weights = weights + self.alpha * vcol(X[i]) * y[i]
                     m += 1
+            iterations += 1
             if m == 0:
                 break    
+            if iterations == max_iterations:
+                break
         self.weights = weights
-
-    def loss_function(self,X,y):
-        return 0;
+        return iterations
+    
+    def compute_min_margin(self, X):
+        """
+        Compute the minimum margin for the given data, it works only if the model has been trained before
+        INPUT :
+        - X : is a 2D NxD numpy array containing the coordinates of points where [N] is the number of samples and [D] is the number of features
+        OUTPUT :
+        - a real number representing the minimum margin
+        """
+        weights = self.weights/np.linalg.norm(self.weights)
+        X = PolynomialFeatures(1).fit_transform(X)
+        min = np.min(np.abs(X.dot(weights)))
+        return min
+        
 
     def predict(self, X):
+        """
+        Predict the labels for the given data, it works only if the model has been trained before
+        INPUT :
+        - X : is a 2D NxD numpy array containing the coordinates of points where [N] is the number of samples and [D] is the number of features
+        OUTPUT :
+        - a 1D numpy array containing the predicted labels in form of -1 or 1
+        """
         return np.sign(self.weights[1:].transpose().dot(X.transpose()) + self.weights[0])
 
 
