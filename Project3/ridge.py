@@ -15,7 +15,9 @@ class Ridge_Regression:
 
     def Train(self, X, y):
         X = transform(X)
-        self.weights = np.linalg.inv(X.T.dot(X) + self.lambda_value * np.identity(X.shape[1])).dot(X.T).dot(y)
+        I = np.eye(X.shape[1])
+        I[-1, -1] = 0
+        self.weights = np.linalg.inv(X.T.dot(X) + self.lambda_value * I).dot(X.T).dot(y)
         return
 
     def Predict(self, x):
