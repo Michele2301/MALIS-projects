@@ -2,10 +2,10 @@ import numpy as np
 
 
 def transform(X):
-    result = np.zeros((X.shape[0], X.shape[1] + 1))
-    for i in range(X.shape[0]):
-        result[i] = np.append(X[i], 1)
-    return result
+        #insert a 1 at the beginning of each row
+        ones=np.ones((X.shape[0],1))
+        return np.concatenate((ones,X),axis=1)
+
 
 
 class Ridge_Regression:
@@ -16,7 +16,7 @@ class Ridge_Regression:
     def Train(self, X, y):
         X = transform(X)
         I = np.eye(X.shape[1])
-        I[-1, -1] = 0
+        I[0,0] = 0
         self.weights = np.linalg.inv(X.T.dot(X) + self.lambda_value * I).dot(X.T).dot(y)
         return
 
