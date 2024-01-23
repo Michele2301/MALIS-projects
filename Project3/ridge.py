@@ -35,7 +35,6 @@ class Ridge_Regression:
     def Predict(self, x):
         """
         Make a prediction on test samples x.
-        
         Args:
             x: numpy array of test samples of dimension (N x M), where [N] is the number of test samples and [M] is the number of features
         Returns:
