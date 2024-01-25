@@ -9,12 +9,13 @@ def transform(X):
 
 
 class Ridge_Regression:
-    def __init__(self, lambda_value=0, normalize=True):
+    def __init__(self, lambda_value=0, normalize=False):
         """
         Ridge regression model.
         
         Args:
             lambda_value = 0: regularization coefficient
+            normalize = False: if True, normalize the data using Z-score normalization
         """
         self.lambda_value = lambda_value
         self.normalize = normalize
@@ -31,12 +32,9 @@ class Ridge_Regression:
         if self.normalize:
             self.X_mean = np.mean(X,axis=0)
             self.X_std = np.std(X,axis=0)
-            self.y_mean = np.mean(y)
 
             X = (X-self.X_mean)/self.X_std
-            y = y-self.y_mean
-            
-        
+
         X = transform(X)
         I = np.eye(X.shape[1])
         I[0,0] = 0
@@ -53,7 +51,7 @@ class Ridge_Regression:
         """
         if self.normalize:
             x = (x-self.X_mean)/self.X_std
-            return transform(x).dot(self.weights)+self.y_mean
+            return transform(x).dot(self.weights)
         return transform(x).dot(self.weights)
 
     def __str__(self):
