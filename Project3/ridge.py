@@ -51,7 +51,6 @@ class Ridge_Regression:
         """
         if self.normalize:
             x = (x-self.X_mean)/self.X_std
-            return transform(x).dot(self.weights)
         return transform(x).dot(self.weights)
 
     def __str__(self):
