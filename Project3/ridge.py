@@ -9,7 +9,7 @@ def transform(X):
 
 
 class Ridge_Regression:
-    def __init__(self, lambda_value=0):
+    def __init__(self, lambda_value=0, normalize=True):
         """
         Ridge regression model.
         
@@ -17,6 +17,7 @@ class Ridge_Regression:
             lambda_value = 0: regularization coefficient
         """
         self.lambda_value = lambda_value
+        self.normalize = normalize
         self.weights = None
 
     def Train(self, X, y):
@@ -26,6 +27,16 @@ class Ridge_Regression:
             X: numpy array of dimension (N x M), where [N] is the number of training samples and [M] is the number of features
             y: numpy array of dimension (N x 1), where [N] is the number of training samples
         """
+        
+        if self.normalize:
+            self.X_mean = np.mean(X,axis=0)
+            self.X_std = np.std(X,axis=0)
+            self.y_mean = np.mean(y)
+
+            X = (X-self.X_mean)/self.X_std
+            y = y-self.y_mean
+            
+        
         X = transform(X)
         I = np.eye(X.shape[1])
         I[0,0] = 0
@@ -40,6 +51,9 @@ class Ridge_Regression:
         Returns:
             numpy array of predictions of dimension (N x 1), where [N] is the number of test samples
         """
+        if self.normalize:
+            x = (x-self.X_mean)/self.X_std
+            return transform(x).dot(self.weights)+self.y_mean
         return transform(x).dot(self.weights)
 
     def __str__(self):
